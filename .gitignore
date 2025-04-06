@@ -5,3 +5,4 @@ node_modules/
 # logins/passwords
 .env
 *.log
+config.json
