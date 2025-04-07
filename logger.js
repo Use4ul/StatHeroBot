@@ -1,21 +1,49 @@
-// logger.js
 const log4js = require('log4js');
+const path = require('path');
 
-// Базовая настройка
 log4js.configure({
     appenders: {
-        console: { type: 'console' }, // Вывод в консоль
-        file: {
+        console: { type: 'console' },
+        main: {
             type: 'file',
-            filename: 'logs/app.log', // Файл для логов
-            maxLogSize: 10_485_760, // 10 MB
-            backups: 5, // 5 резервных копий
+            filename: path.join(__dirname, './logs/main.log'),
+            maxLogSize: 5242880,
+            backups: 7,
+            layout: {
+                type: 'pattern',
+                pattern: '%d{yyyy-MM-dd hh:mm:ss} [%p] %m',
+            },
+        },
+        database: {
+            type: 'file',
+            filename: path.join(__dirname, './logs/dataBase.log'),
+            maxLogSize: 5242880,
+            backups: 7,
+            layout: {
+                type: 'pattern',
+                pattern: '%d{yyyy-MM-dd hh:mm:ss} [%p] %m',
+            },
+        },
+        sync: {
+            type: 'file',
+            filename: path.join(__dirname, './logs/sync.log'),
+            maxLogSize: 5242880,
+            backups: 7,
+            layout: {
+                type: 'pattern',
+                pattern: '%d{yyyy-MM-dd hh:mm:ss} [%p] %m',
+            },
         },
     },
     categories: {
-        default: { appenders: ['console', 'file'], level: 'info' },
+        default: { appenders: ['console', 'main'], level: 'info' },
+        database: { appenders: ['database'], level: 'debug' },
+        sync: { appenders: ['sync', 'console'], level: 'info' },
     },
 });
 
-// Экспорт логгера
-module.exports = log4js.getLogger();
+module.exports = {
+    mainLogger: log4js.getLogger(),
+    dataBaseLogger: log4js.getLogger('database'),
+    syncLogger: log4js.getLogger('sync'),
+};
